@@ -1,0 +1,43 @@
+﻿<local:NavigablePage
+    x:Class="Microsoft.PowerToys.Settings.UI.Views.DEPiPPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.PowerToys.Settings.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Microsoft.PowerToys.Settings.UI.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:tkcontrols="using:CommunityToolkit.WinUI.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    AutomationProperties.LandmarkType="Main"
+    mc:Ignorable="d">
+
+    <controls:SettingsPageControl
+        x:Uid="DEPiP"
+        IsTabStop="False"
+        ModuleImageSource="ms-appx:///Assets/Settings/Modules/DEPiP.png">
+        <controls:SettingsPageControl.ModuleContent>
+            <StackPanel ChildrenTransitions="{StaticResource SettingsCardsAnimations}" Orientation="Vertical">
+                <tkcontrols:SettingsCard
+                    Name="DEPiPEnableToggleControlHeaderText"
+                    x:Uid="DEPiP_EnableToggleControl_HeaderText"
+                    HeaderIcon="{ui:BitmapIcon Source=/Assets/Settings/Icons/DEPiP.png}">
+                    <ToggleSwitch x:Uid="ToggleSwitch" IsOn="{x:Bind ViewModel.IsEnabled, Mode=TwoWay}" />
+                </tkcontrols:SettingsCard>
+                <controls:SettingsGroup x:Uid="DEPiP_Activation_GroupSettings" IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
+                    <tkcontrols:SettingsCard
+                        Name="DEPiPLaunchButtonControl"
+                        x:Uid="DEPiP_LaunchButtonControl"
+                        ActionIcon="{ui:FontIcon Glyph=&#xE8A7;}"
+                        Command="{x:Bind ViewModel.LaunchEventHandler}"
+                        HeaderIcon="{ui:FontIcon Glyph=&#xE7E8;}"
+                        IsClickEnabled="True" />
+                </controls:SettingsGroup>
+                <InfoBar
+                    x:Uid="DEPiP_DisplaySelectorInfo"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Severity="Informational" />
+            </StackPanel>
+        </controls:SettingsPageControl.ModuleContent>
+    </controls:SettingsPageControl>
+</local:NavigablePage>
