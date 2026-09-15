@@ -6743,6 +6743,12 @@ Text uses the current drawing color.</value>
   <data name="DEPiP_LaunchButtonControl.Description" xml:space="preserve">
     <value>Select a display to mirror in a picture-in-picture window</value>
   </data>
+  <data name="DEPiP_InactiveTransparency.Header" xml:space="preserve">
+    <value>Inactive transparency</value>
+  </data>
+  <data name="DEPiP_InactiveTransparency.Description" xml:space="preserve">
+    <value>Controls how transparent the mirror becomes when the pointer is on a display other than the one being mirrored</value>
+  </data>
   <data name="Oobe_DEPiP.Title" xml:space="preserve">
     <value>DEPiP</value>
     <comment>DEPiP is a product name and should not be localized.</comment>

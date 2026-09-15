@@ -3,10 +3,13 @@
 #include <interface/powertoy_module_interface.h>
 
 #include <common/interop/shared_constants.h>
+#include <common/SettingsAPI/settings_objects.h>
 #include <common/utils/EventWaiter.h>
 
 #include "../ModuleConstants.h"
 #include "trace.h"
+
+extern "C" IMAGE_DOS_HEADER __ImageBase;
 
 BOOL APIENTRY DllMain(HMODULE, DWORD reason, LPVOID)
 {
@@ -26,6 +29,8 @@ BOOL APIENTRY DllMain(HMODULE, DWORD reason, LPVOID)
 namespace
 {
     constexpr wchar_t MODULE_NAME[] = L"DEPiP";
+    constexpr wchar_t MODULE_DESCRIPTION[] =
+        L"Mirror any connected display in a movable picture-in-picture window.";
 }
 
 class DEPiPModuleInterface : public PowertoyModuleIface
@@ -34,6 +39,7 @@ public:
     DEPiPModuleInterface()
     {
         m_exitEvent = CreateDefaultEvent(DEPiPConstants::ExitEvent);
+        m_reloadSettingsEvent = CreateDefaultEvent(DEPiPConstants::ReloadSettingsEvent);
         m_showEvent = CreateDefaultEvent(CommonSharedConstants::SHOW_DEPIP_EVENT);
         m_showEventWaiter.start(CommonSharedConstants::SHOW_DEPIP_EVENT, [this](DWORD error) {
             if (m_enabled && error == ERROR_SUCCESS)
@@ -54,6 +60,10 @@ public:
         {
             CloseHandle(m_showEvent);
         }
+        if (m_reloadSettingsEvent)
+        {
+            CloseHandle(m_reloadSettingsEvent);
+        }
         delete this;
     }
 
@@ -67,13 +77,30 @@ public:
         return MODULE_NAME;
     }
 
-    bool get_config(wchar_t*, int*) override
+    bool get_config(wchar_t* buffer, int* bufferSize) override
     {
-        return false;
+        HINSTANCE instance = reinterpret_cast<HINSTANCE>(&__ImageBase);
+        PowerToysSettings::Settings settings(instance, get_name());
+        settings.set_description(MODULE_DESCRIPTION);
+        settings.set_overview_link(L"https://aka.ms/powertoys");
+        return settings.serialize_to_buffer(buffer, bufferSize);
     }
 
-    void set_config(const wchar_t*) override
+    void set_config(const wchar_t* config) override
     {
+        try
+        {
+            auto values = PowerToysSettings::PowerToyValues::from_json_string(config, get_key());
+            values.save_to_settings_file();
+            if (m_reloadSettingsEvent)
+            {
+                SetEvent(m_reloadSettingsEvent);
+            }
+        }
+        catch (const std::exception& error)
+        {
+            OutputDebugStringA(error.what());
+        }
     }
 
     void enable() override
@@ -180,7 +207,7 @@ private:
                 nullptr,
                 nullptr,
                 FALSE,
-                0,
+                CREATE_SUSPENDED,
                 nullptr,
                 nullptr,
                 &startupInfo,
@@ -189,6 +216,14 @@ private:
             return;
         }
 
+        AllowSetForegroundWindow(processInfo.dwProcessId);
+        if (ResumeThread(processInfo.hThread) == static_cast<DWORD>(-1))
+        {
+            TerminateProcess(processInfo.hProcess, 1);
+            CloseHandle(processInfo.hThread);
+            CloseHandle(processInfo.hProcess);
+            return;
+        }
         CloseHandle(processInfo.hThread);
         m_process = processInfo.hProcess;
     }
@@ -196,6 +231,7 @@ private:
     bool m_enabled = false;
     HANDLE m_exitEvent = nullptr;
     HANDLE m_showEvent = nullptr;
+    HANDLE m_reloadSettingsEvent = nullptr;
     HANDLE m_process = nullptr;
     EventWaiter m_showEventWaiter;
 };

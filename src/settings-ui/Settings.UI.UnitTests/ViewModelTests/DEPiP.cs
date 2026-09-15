@@ -4,6 +4,8 @@
 
 using System.Threading;
 
+using ManagedCommon;
+using Microsoft.PowerToys.Settings.UI.Controls;
 using Microsoft.PowerToys.Settings.UI.Library;
 using Microsoft.PowerToys.Settings.UI.UnitTests.BackwardsCompatibility;
 using Microsoft.PowerToys.Settings.UI.UnitTests.Mocks;
@@ -22,7 +24,7 @@ public class DEPiP
         var repository = new BackCompatTestProperties.MockSettingsRepository<GeneralSettings>(
             ISettingsUtilsMocks.GetStubSettingsUtils<GeneralSettings>().Object);
         string sentMessage = null;
-        var viewModel = new DEPiPViewModel(repository, message =>
+        var viewModel = new DEPiPViewModel(repository, new DEPiPSettings(), message =>
         {
             sentMessage = message;
             return 0;
@@ -40,11 +42,42 @@ public class DEPiP
     {
         var repository = new BackCompatTestProperties.MockSettingsRepository<GeneralSettings>(
             ISettingsUtilsMocks.GetStubSettingsUtils<GeneralSettings>().Object);
-        var viewModel = new DEPiPViewModel(repository, _ => 0);
+        var viewModel = new DEPiPViewModel(repository, new DEPiPSettings(), _ => 0);
         using var eventHandle = new EventWaitHandle(false, EventResetMode.AutoReset, Constants.ShowDEPiPSharedEvent());
 
         viewModel.Launch();
 
+        Assert.IsTrue(eventHandle.WaitOne(0));
+    }
+
+    [TestMethod]
+    public void InactiveTransparencySendsUpdatedModuleSettings()
+    {
+        var repository = new BackCompatTestProperties.MockSettingsRepository<GeneralSettings>(
+            ISettingsUtilsMocks.GetStubSettingsUtils<GeneralSettings>().Object);
+        var moduleSettings = new DEPiPSettings();
+        string sentMessage = null;
+        var viewModel = new DEPiPViewModel(repository, moduleSettings, message =>
+        {
+            sentMessage = message;
+            return 0;
+        });
+
+        viewModel.InactiveTransparency = 35;
+
+        Assert.AreEqual(35, moduleSettings.Properties.InactiveTransparency.Value);
+        StringAssert.Contains(sentMessage, "\"inactiveTransparency\":{\"value\":35}");
+    }
+
+    [TestMethod]
+    public void QuickAccessLaunchSignalsSharedEvent()
+    {
+        var launcher = new QuickAccessLauncher(false);
+        using var eventHandle = new EventWaitHandle(false, EventResetMode.AutoReset, Constants.ShowDEPiPSharedEvent());
+
+        bool launched = launcher.Launch(ModuleType.DEPiP);
+
+        Assert.IsTrue(launched);
         Assert.IsTrue(eventHandle.WaitOne(0));
     }
 }

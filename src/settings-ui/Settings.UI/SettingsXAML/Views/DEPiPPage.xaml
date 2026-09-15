@@ -31,6 +31,19 @@
                         Command="{x:Bind ViewModel.LaunchEventHandler}"
                         HeaderIcon="{ui:FontIcon Glyph=&#xE7E8;}"
                         IsClickEnabled="True" />
+                    <tkcontrols:SettingsCard
+                        Name="DEPiPInactiveTransparency"
+                        x:Uid="DEPiP_InactiveTransparency"
+                        HeaderIcon="{ui:FontIcon Glyph=&#xE793;}">
+                        <Slider
+                            MinWidth="{StaticResource SettingActionControlMinWidth}"
+                            LargeChange="10"
+                            Maximum="90"
+                            Minimum="0"
+                            SmallChange="1"
+                            StepFrequency="1"
+                            Value="{x:Bind ViewModel.InactiveTransparency, Mode=TwoWay}" />
+                    </tkcontrols:SettingsCard>
                 </controls:SettingsGroup>
                 <InfoBar
                     x:Uid="DEPiP_DisplaySelectorInfo"

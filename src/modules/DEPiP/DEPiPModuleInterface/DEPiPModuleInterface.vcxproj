@@ -151,8 +151,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(RepoRoot)src\common\Telemetry;$(RepoRoot)src\;$(RepoRoot)src\modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(RepoRoot)src\common\SettingsAPI\$(Platform)\$(Configuration)\Generated Files;$(RepoRoot)src\common\Telemetry;$(RepoRoot)src\;$(RepoRoot)src\modules;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\ModuleConstants.h" />
@@ -171,10 +174,15 @@
     <ResourceCompile Include="DEPiPModuleInterface.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DEPiP\DEPiP.vcxproj">
-      <Project>{28D979E9-70C9-416C-B883-FC99577CD8C3}</Project>
-      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    <ProjectReference Include="$(RepoRoot)src\common\SettingsAPI\SettingsAPI.vcxproj">
+      <Project>{6955446d-23f7-4023-9bb3-8657f904af99}</Project>
     </ProjectReference>
   </ItemGroup>
+  <Target Name="BuildDEPiPApplication" BeforeTargets="PrepareForBuild">
+    <MSBuild
+      Projects="..\DEPiP\DEPiP.vcxproj"
+      Targets="Build"
+      Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

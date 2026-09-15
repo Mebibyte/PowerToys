@@ -14,8 +14,10 @@ namespace Microsoft.PowerToys.Settings.UI.Views
 
         public DEPiPPage()
         {
+            var moduleSettingsRepository = SettingsRepository<DEPiPSettings>.GetInstance(SettingsUtils.Default);
             ViewModel = new DEPiPViewModel(
                 SettingsRepository<GeneralSettings>.GetInstance(SettingsUtils.Default),
+                moduleSettingsRepository.SettingsConfig,
                 ShellPage.SendDefaultIPCMessage);
             DataContext = ViewModel;
             InitializeComponent();
