@@ -70,6 +70,25 @@ public class DEPiP
     }
 
     [TestMethod]
+    public void LockAspectRatioSendsUpdatedModuleSettings()
+    {
+        var repository = new BackCompatTestProperties.MockSettingsRepository<GeneralSettings>(
+            ISettingsUtilsMocks.GetStubSettingsUtils<GeneralSettings>().Object);
+        var moduleSettings = new DEPiPSettings();
+        string sentMessage = null;
+        var viewModel = new DEPiPViewModel(repository, moduleSettings, message =>
+        {
+            sentMessage = message;
+            return 0;
+        });
+
+        viewModel.LockAspectRatio = true;
+
+        Assert.IsTrue(moduleSettings.Properties.LockAspectRatio.Value);
+        StringAssert.Contains(sentMessage, "\"lockAspectRatio\":{\"value\":true}");
+    }
+
+    [TestMethod]
     public void QuickAccessLaunchSignalsSharedEvent()
     {
         var launcher = new QuickAccessLauncher(false);

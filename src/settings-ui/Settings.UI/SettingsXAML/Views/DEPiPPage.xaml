@@ -44,6 +44,12 @@
                             StepFrequency="1"
                             Value="{x:Bind ViewModel.InactiveTransparency, Mode=TwoWay}" />
                     </tkcontrols:SettingsCard>
+                    <tkcontrols:SettingsCard
+                        Name="DEPiPLockAspectRatio"
+                        x:Uid="DEPiP_LockAspectRatio"
+                        HeaderIcon="{ui:FontIcon Glyph=&#xE8A6;}">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.LockAspectRatio, Mode=TwoWay}" />
+                    </tkcontrols:SettingsCard>
                 </controls:SettingsGroup>
                 <InfoBar
                     x:Uid="DEPiP_DisplaySelectorInfo"

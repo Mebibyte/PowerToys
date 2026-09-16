@@ -9,13 +9,18 @@ namespace Microsoft.PowerToys.Settings.UI.Library
     public class DEPiPProperties
     {
         public const int DefaultInactiveTransparency = 14;
+        public const bool DefaultLockAspectRatio = false;
 
         public DEPiPProperties()
         {
             InactiveTransparency = new IntProperty(DefaultInactiveTransparency);
+            LockAspectRatio = new BoolProperty(DefaultLockAspectRatio);
         }
 
         [JsonPropertyName("inactiveTransparency")]
         public IntProperty InactiveTransparency { get; set; }
+
+        [JsonPropertyName("lockAspectRatio")]
+        public BoolProperty LockAspectRatio { get; set; }
     }
 }

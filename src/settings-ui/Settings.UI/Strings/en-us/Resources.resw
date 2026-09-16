@@ -6749,6 +6749,12 @@ Text uses the current drawing color.</value>
   <data name="DEPiP_InactiveTransparency.Description" xml:space="preserve">
     <value>Controls how transparent the mirror becomes when the pointer is on a display other than the one being mirrored</value>
   </data>
+  <data name="DEPiP_LockAspectRatio.Header" xml:space="preserve">
+    <value>Lock aspect ratio</value>
+  </data>
+  <data name="DEPiP_LockAspectRatio.Description" xml:space="preserve">
+    <value>Keep the mirror window proportional to the selected display while resizing</value>
+  </data>
   <data name="Oobe_DEPiP.Title" xml:space="preserve">
     <value>DEPiP</value>
     <comment>DEPiP is a product name and should not be localized.</comment>

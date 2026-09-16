@@ -25,6 +25,7 @@ namespace
     constexpr UINT OpacityRefreshMilliseconds = 150;
     constexpr int DefaultInactiveTransparency = 14;
     constexpr int MaximumInactiveTransparency = 90;
+    constexpr bool DefaultLockAspectRatio = false;
 
     int LoadInactiveTransparency()
     {
@@ -45,6 +46,26 @@ namespace
         {
             OutputDebugStringA(error.what());
             return DefaultInactiveTransparency;
+        }
+    }
+
+    bool LoadLockAspectRatio()
+    {
+        try
+        {
+            const auto properties =
+                PTSettingsHelper::load_module_settings(L"DEPiP").GetNamedObject(L"properties");
+            return properties.GetNamedObject(L"lockAspectRatio").GetNamedBoolean(L"value");
+        }
+        catch (const winrt::hresult_error& error)
+        {
+            OutputDebugStringW(error.message().c_str());
+            return DefaultLockAspectRatio;
+        }
+        catch (const std::exception& error)
+        {
+            OutputDebugStringA(error.what());
+            return DefaultLockAspectRatio;
         }
     }
 
@@ -609,11 +630,13 @@ namespace
             DisplayInfo primaryDisplay,
             DisplayInfo sourceDisplay,
             std::wstring title,
-            int inactiveTransparency) :
+            int inactiveTransparency,
+            bool lockAspectRatio) :
             m_primaryDisplay{ primaryDisplay },
             m_sourceDisplay{ sourceDisplay },
             m_title{ std::move(title) },
-            m_inactiveTransparency{ inactiveTransparency }
+            m_inactiveTransparency{ inactiveTransparency },
+            m_lockAspectRatio{ lockAspectRatio }
         {
         }
 
@@ -638,6 +661,7 @@ namespace
         void ReloadSettings()
         {
             m_inactiveTransparency = LoadInactiveTransparency();
+            m_lockAspectRatio = LoadLockAspectRatio();
             UpdateOpacity();
         }
 
@@ -666,6 +690,13 @@ namespace
                         MinimumClientWidth * sourceSize.Height / std::max(1, sourceSize.Width));
                 }
                 return 0;
+            case WM_SIZING:
+                if (self && self->m_lockAspectRatio)
+                {
+                    self->ApplyAspectRatio(wordParam, *reinterpret_cast<RECT*>(longParam));
+                    return TRUE;
+                }
+                break;
             case WM_TIMER:
                 if (self && wordParam == OpacityTimerId)
                 {
@@ -734,6 +765,109 @@ namespace
             SetLayeredWindowAttributes(m_window, 0, 255, LWA_ALPHA);
             SetTimer(m_window, OpacityTimerId, OpacityRefreshMilliseconds, nullptr);
             UpdateOpacity();
+        }
+
+        void ApplyAspectRatio(WPARAM sizingEdge, RECT& proposedWindowRect)
+        {
+            RECT currentClientRect{};
+            RECT currentWindowRect{};
+            if (!GetClientRect(m_window, &currentClientRect) ||
+                !GetWindowRect(m_window, &currentWindowRect))
+            {
+                return;
+            }
+
+            const int sourceWidth = m_sourceDisplay.info.rcMonitor.right - m_sourceDisplay.info.rcMonitor.left;
+            const int sourceHeight = m_sourceDisplay.info.rcMonitor.bottom - m_sourceDisplay.info.rcMonitor.top;
+            if (sourceWidth <= 0 || sourceHeight <= 0)
+            {
+                return;
+            }
+
+            const int nonClientWidth =
+                (currentWindowRect.right - currentWindowRect.left) -
+                (currentClientRect.right - currentClientRect.left);
+            const int nonClientHeight =
+                (currentWindowRect.bottom - currentWindowRect.top) -
+                (currentClientRect.bottom - currentClientRect.top);
+            const int proposedClientWidth = std::max(
+                1,
+                static_cast<int>(proposedWindowRect.right - proposedWindowRect.left) - nonClientWidth);
+            const int proposedClientHeight = std::max(
+                1,
+                static_cast<int>(proposedWindowRect.bottom - proposedWindowRect.top) - nonClientHeight);
+
+            int clientWidth = proposedClientWidth;
+            int clientHeight = proposedClientHeight;
+            if (sizingEdge == WMSZ_LEFT || sizingEdge == WMSZ_RIGHT)
+            {
+                clientHeight = MulDiv(clientWidth, sourceHeight, sourceWidth);
+            }
+            else if (sizingEdge == WMSZ_TOP || sizingEdge == WMSZ_BOTTOM)
+            {
+                clientWidth = MulDiv(clientHeight, sourceWidth, sourceHeight);
+            }
+            else
+            {
+                const int widthDrivenHeight = MulDiv(clientWidth, sourceHeight, sourceWidth);
+                const int heightDrivenWidth = MulDiv(clientHeight, sourceWidth, sourceHeight);
+                if (std::abs(widthDrivenHeight - clientHeight) <=
+                    std::abs(heightDrivenWidth - clientWidth))
+                {
+                    clientHeight = widthDrivenHeight;
+                }
+                else
+                {
+                    clientWidth = heightDrivenWidth;
+                }
+            }
+
+            const int windowWidth = clientWidth + nonClientWidth;
+            const int windowHeight = clientHeight + nonClientHeight;
+            const LONG horizontalCenter =
+                proposedWindowRect.left + (proposedWindowRect.right - proposedWindowRect.left) / 2;
+            const LONG verticalCenter =
+                proposedWindowRect.top + (proposedWindowRect.bottom - proposedWindowRect.top) / 2;
+
+            switch (sizingEdge)
+            {
+            case WMSZ_LEFT:
+                proposedWindowRect.left = proposedWindowRect.right - windowWidth;
+                proposedWindowRect.top = verticalCenter - windowHeight / 2;
+                proposedWindowRect.bottom = proposedWindowRect.top + windowHeight;
+                break;
+            case WMSZ_RIGHT:
+                proposedWindowRect.right = proposedWindowRect.left + windowWidth;
+                proposedWindowRect.top = verticalCenter - windowHeight / 2;
+                proposedWindowRect.bottom = proposedWindowRect.top + windowHeight;
+                break;
+            case WMSZ_TOP:
+                proposedWindowRect.top = proposedWindowRect.bottom - windowHeight;
+                proposedWindowRect.left = horizontalCenter - windowWidth / 2;
+                proposedWindowRect.right = proposedWindowRect.left + windowWidth;
+                break;
+            case WMSZ_BOTTOM:
+                proposedWindowRect.bottom = proposedWindowRect.top + windowHeight;
+                proposedWindowRect.left = horizontalCenter - windowWidth / 2;
+                proposedWindowRect.right = proposedWindowRect.left + windowWidth;
+                break;
+            case WMSZ_TOPLEFT:
+                proposedWindowRect.left = proposedWindowRect.right - windowWidth;
+                proposedWindowRect.top = proposedWindowRect.bottom - windowHeight;
+                break;
+            case WMSZ_TOPRIGHT:
+                proposedWindowRect.right = proposedWindowRect.left + windowWidth;
+                proposedWindowRect.top = proposedWindowRect.bottom - windowHeight;
+                break;
+            case WMSZ_BOTTOMLEFT:
+                proposedWindowRect.left = proposedWindowRect.right - windowWidth;
+                proposedWindowRect.bottom = proposedWindowRect.top + windowHeight;
+                break;
+            case WMSZ_BOTTOMRIGHT:
+                proposedWindowRect.right = proposedWindowRect.left + windowWidth;
+                proposedWindowRect.bottom = proposedWindowRect.top + windowHeight;
+                break;
+            }
         }
 
         void UpdateOpacity()
@@ -924,6 +1058,7 @@ namespace
         HWND m_window = nullptr;
         BYTE m_opacity = 255;
         int m_inactiveTransparency = DefaultInactiveTransparency;
+        bool m_lockAspectRatio = DefaultLockAspectRatio;
         std::mutex m_captureMutex;
         winrt::com_ptr<ID3D11Device> m_device;
         winrt::com_ptr<ID3D11DeviceContext> m_context;
@@ -958,7 +1093,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int showCommand)
             primary != displays.end() ? *primary : displays.front(),
             source,
             title,
-            LoadInactiveTransparency()
+            LoadInactiveTransparency(),
+            LoadLockAspectRatio()
         };
         mirror.Initialize(instance);
         ShowWindow(mirror.Window(), showCommand);

@@ -80,11 +80,30 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
                 if (ModuleSettings.Properties.InactiveTransparency.Value != clampedValue)
                 {
                     ModuleSettings.Properties.InactiveTransparency.Value = clampedValue;
-                    SndDEPiPSettings settings = new(ModuleSettings);
-                    SendConfigMSG(new SndModuleSettings<SndDEPiPSettings>(settings).ToJsonString());
+                    NotifyModuleSettingsChanged();
                     OnPropertyChanged(nameof(InactiveTransparency));
                 }
             }
+        }
+
+        public bool LockAspectRatio
+        {
+            get => ModuleSettings.Properties.LockAspectRatio.Value;
+            set
+            {
+                if (ModuleSettings.Properties.LockAspectRatio.Value != value)
+                {
+                    ModuleSettings.Properties.LockAspectRatio.Value = value;
+                    NotifyModuleSettingsChanged();
+                    OnPropertyChanged(nameof(LockAspectRatio));
+                }
+            }
+        }
+
+        private void NotifyModuleSettingsChanged()
+        {
+            SndDEPiPSettings settings = new(ModuleSettings);
+            SendConfigMSG(new SndModuleSettings<SndDEPiPSettings>(settings).ToJsonString());
         }
 
         private void InitializeEnabledValue()
