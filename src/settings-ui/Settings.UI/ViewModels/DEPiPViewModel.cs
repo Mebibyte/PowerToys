@@ -100,6 +100,20 @@ namespace Microsoft.PowerToys.Settings.UI.ViewModels
             }
         }
 
+        public bool AlwaysOnTop
+        {
+            get => ModuleSettings.Properties.AlwaysOnTop.Value;
+            set
+            {
+                if (ModuleSettings.Properties.AlwaysOnTop.Value != value)
+                {
+                    ModuleSettings.Properties.AlwaysOnTop.Value = value;
+                    NotifyModuleSettingsChanged();
+                    OnPropertyChanged(nameof(AlwaysOnTop));
+                }
+            }
+        }
+
         private void NotifyModuleSettingsChanged()
         {
             SndDEPiPSettings settings = new(ModuleSettings);

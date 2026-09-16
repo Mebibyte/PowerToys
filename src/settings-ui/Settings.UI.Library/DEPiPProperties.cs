@@ -10,11 +10,13 @@ namespace Microsoft.PowerToys.Settings.UI.Library
     {
         public const int DefaultInactiveTransparency = 14;
         public const bool DefaultLockAspectRatio = false;
+        public const bool DefaultAlwaysOnTop = false;
 
         public DEPiPProperties()
         {
             InactiveTransparency = new IntProperty(DefaultInactiveTransparency);
             LockAspectRatio = new BoolProperty(DefaultLockAspectRatio);
+            AlwaysOnTop = new BoolProperty(DefaultAlwaysOnTop);
         }
 
         [JsonPropertyName("inactiveTransparency")]
@@ -22,5 +24,8 @@ namespace Microsoft.PowerToys.Settings.UI.Library
 
         [JsonPropertyName("lockAspectRatio")]
         public BoolProperty LockAspectRatio { get; set; }
+
+        [JsonPropertyName("alwaysOnTop")]
+        public BoolProperty AlwaysOnTop { get; set; }
     }
 }

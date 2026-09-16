@@ -23,14 +23,20 @@
                     HeaderIcon="{ui:BitmapIcon Source=/Assets/Settings/Icons/DEPiP.png}">
                     <ToggleSwitch x:Uid="ToggleSwitch" IsOn="{x:Bind ViewModel.IsEnabled, Mode=TwoWay}" />
                 </tkcontrols:SettingsCard>
-                <controls:SettingsGroup x:Uid="DEPiP_Activation_GroupSettings" IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
-                    <tkcontrols:SettingsCard
-                        Name="DEPiPLaunchButtonControl"
-                        x:Uid="DEPiP_LaunchButtonControl"
-                        ActionIcon="{ui:FontIcon Glyph=&#xE8A7;}"
-                        Command="{x:Bind ViewModel.LaunchEventHandler}"
-                        HeaderIcon="{ui:FontIcon Glyph=&#xE7E8;}"
-                        IsClickEnabled="True" />
+                <tkcontrols:SettingsCard
+                    Name="DEPiPLaunchButtonControl"
+                    x:Uid="DEPiP_LaunchButtonControl"
+                    ActionIcon="{ui:FontIcon Glyph=&#xE8A7;}"
+                    Command="{x:Bind ViewModel.LaunchEventHandler}"
+                    HeaderIcon="{ui:FontIcon Glyph=&#xE7E8;}"
+                    IsClickEnabled="True"
+                    IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}" />
+                <InfoBar
+                    x:Uid="DEPiP_DisplaySelectorInfo"
+                    IsClosable="False"
+                    IsOpen="True"
+                    Severity="Informational" />
+                <controls:SettingsGroup x:Uid="DEPiP_Settings_GroupSettings" IsEnabled="{x:Bind ViewModel.IsEnabled, Mode=OneWay}">
                     <tkcontrols:SettingsCard
                         Name="DEPiPInactiveTransparency"
                         x:Uid="DEPiP_InactiveTransparency"
@@ -50,12 +56,13 @@
                         HeaderIcon="{ui:FontIcon Glyph=&#xE8A6;}">
                         <ToggleSwitch IsOn="{x:Bind ViewModel.LockAspectRatio, Mode=TwoWay}" />
                     </tkcontrols:SettingsCard>
+                    <tkcontrols:SettingsCard
+                        Name="DEPiPAlwaysOnTop"
+                        x:Uid="DEPiP_AlwaysOnTop"
+                        HeaderIcon="{ui:FontIcon Glyph=&#xE718;}">
+                        <ToggleSwitch IsOn="{x:Bind ViewModel.AlwaysOnTop, Mode=TwoWay}" />
+                    </tkcontrols:SettingsCard>
                 </controls:SettingsGroup>
-                <InfoBar
-                    x:Uid="DEPiP_DisplaySelectorInfo"
-                    IsClosable="False"
-                    IsOpen="True"
-                    Severity="Informational" />
             </StackPanel>
         </controls:SettingsPageControl.ModuleContent>
     </controls:SettingsPageControl>

@@ -26,6 +26,7 @@ namespace
     constexpr int DefaultInactiveTransparency = 14;
     constexpr int MaximumInactiveTransparency = 90;
     constexpr bool DefaultLockAspectRatio = false;
+    constexpr bool DefaultAlwaysOnTop = false;
 
     int LoadInactiveTransparency()
     {
@@ -57,6 +58,7 @@ namespace
                 PTSettingsHelper::load_module_settings(L"DEPiP").GetNamedObject(L"properties");
             return properties.GetNamedObject(L"lockAspectRatio").GetNamedBoolean(L"value");
         }
+
         catch (const winrt::hresult_error& error)
         {
             OutputDebugStringW(error.message().c_str());
@@ -66,6 +68,26 @@ namespace
         {
             OutputDebugStringA(error.what());
             return DefaultLockAspectRatio;
+        }
+    }
+
+    bool LoadAlwaysOnTop()
+    {
+        try
+        {
+            const auto properties =
+                PTSettingsHelper::load_module_settings(L"DEPiP").GetNamedObject(L"properties");
+            return properties.GetNamedObject(L"alwaysOnTop").GetNamedBoolean(L"value");
+        }
+        catch (const winrt::hresult_error& error)
+        {
+            OutputDebugStringW(error.message().c_str());
+            return DefaultAlwaysOnTop;
+        }
+        catch (const std::exception& error)
+        {
+            OutputDebugStringA(error.what());
+            return DefaultAlwaysOnTop;
         }
     }
 
@@ -631,12 +653,14 @@ namespace
             DisplayInfo sourceDisplay,
             std::wstring title,
             int inactiveTransparency,
-            bool lockAspectRatio) :
+            bool lockAspectRatio,
+            bool alwaysOnTop) :
             m_primaryDisplay{ primaryDisplay },
             m_sourceDisplay{ sourceDisplay },
             m_title{ std::move(title) },
             m_inactiveTransparency{ inactiveTransparency },
-            m_lockAspectRatio{ lockAspectRatio }
+            m_lockAspectRatio{ lockAspectRatio },
+            m_alwaysOnTop{ alwaysOnTop }
         {
         }
 
@@ -662,7 +686,9 @@ namespace
         {
             m_inactiveTransparency = LoadInactiveTransparency();
             m_lockAspectRatio = LoadLockAspectRatio();
+            m_alwaysOnTop = LoadAlwaysOnTop();
             UpdateOpacity();
+            ApplyAlwaysOnTop();
         }
 
     private:
@@ -765,6 +791,19 @@ namespace
             SetLayeredWindowAttributes(m_window, 0, 255, LWA_ALPHA);
             SetTimer(m_window, OpacityTimerId, OpacityRefreshMilliseconds, nullptr);
             UpdateOpacity();
+            ApplyAlwaysOnTop();
+        }
+
+        void ApplyAlwaysOnTop()
+        {
+            SetWindowPos(
+                m_window,
+                m_alwaysOnTop ? HWND_TOPMOST : HWND_NOTOPMOST,
+                0,
+                0,
+                0,
+                0,
+                SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
         }
 
         void ApplyAspectRatio(WPARAM sizingEdge, RECT& proposedWindowRect)
@@ -1059,6 +1098,7 @@ namespace
         BYTE m_opacity = 255;
         int m_inactiveTransparency = DefaultInactiveTransparency;
         bool m_lockAspectRatio = DefaultLockAspectRatio;
+        bool m_alwaysOnTop = DefaultAlwaysOnTop;
         std::mutex m_captureMutex;
         winrt::com_ptr<ID3D11Device> m_device;
         winrt::com_ptr<ID3D11DeviceContext> m_context;
@@ -1094,7 +1134,8 @@ int WINAPI wWinMain(HINSTANCE instance, HINSTANCE, PWSTR, int showCommand)
             source,
             title,
             LoadInactiveTransparency(),
-            LoadLockAspectRatio()
+            LoadLockAspectRatio(),
+            LoadAlwaysOnTop()
         };
         mirror.Initialize(instance);
         ShowWindow(mirror.Window(), showCommand);

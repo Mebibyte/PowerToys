@@ -89,6 +89,25 @@ public class DEPiP
     }
 
     [TestMethod]
+    public void AlwaysOnTopSendsUpdatedModuleSettings()
+    {
+        var repository = new BackCompatTestProperties.MockSettingsRepository<GeneralSettings>(
+            ISettingsUtilsMocks.GetStubSettingsUtils<GeneralSettings>().Object);
+        var moduleSettings = new DEPiPSettings();
+        string sentMessage = null;
+        var viewModel = new DEPiPViewModel(repository, moduleSettings, message =>
+        {
+            sentMessage = message;
+            return 0;
+        });
+
+        viewModel.AlwaysOnTop = true;
+
+        Assert.IsTrue(moduleSettings.Properties.AlwaysOnTop.Value);
+        StringAssert.Contains(sentMessage, "\"alwaysOnTop\":{\"value\":true}");
+    }
+
+    [TestMethod]
     public void QuickAccessLaunchSignalsSharedEvent()
     {
         var launcher = new QuickAccessLauncher(false);

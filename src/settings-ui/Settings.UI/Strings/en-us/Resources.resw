@@ -6734,8 +6734,8 @@ Text uses the current drawing color.</value>
   <data name="DEPiP_DisplaySelectorInfo.Message" xml:space="preserve">
     <value>When you open DEPiP, select any connected display to mirror. The primary display is available even when only one display is connected.</value>
   </data>
-  <data name="DEPiP_Activation_GroupSettings.Header" xml:space="preserve">
-    <value>Activation</value>
+  <data name="DEPiP_Settings_GroupSettings.Header" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="DEPiP_LaunchButtonControl.Header" xml:space="preserve">
     <value>Open Desktop Extended Picture-in-Picture</value>
@@ -6754,6 +6754,12 @@ Text uses the current drawing color.</value>
   </data>
   <data name="DEPiP_LockAspectRatio.Description" xml:space="preserve">
     <value>Keep the mirror window proportional to the selected display while resizing</value>
+  </data>
+  <data name="DEPiP_AlwaysOnTop.Header" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="DEPiP_AlwaysOnTop.Description" xml:space="preserve">
+    <value>Keep the mirrored display above other windows</value>
   </data>
   <data name="Oobe_DEPiP.Title" xml:space="preserve">
     <value>DEPiP</value>
