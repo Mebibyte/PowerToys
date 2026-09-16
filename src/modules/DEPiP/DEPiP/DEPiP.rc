@@ -3,7 +3,7 @@
 STRINGTABLE
 BEGIN
     IDS_APP_TITLE "DEPiP"
-    IDS_DISPLAY_SELECTOR_TITLE "Select a display"
+    IDS_DISPLAY_SELECTOR_TITLE "DEPiP: Display Extended Picture-in-Picture"
     IDS_DISPLAY_SELECTOR_INSTRUCTION "Choose the display to mirror"
     IDS_DISPLAY_SELECTOR_DESCRIPTION "DEPiP can mirror any connected display, including your primary display."
     IDS_PRIMARY_DISPLAY "Primary"
