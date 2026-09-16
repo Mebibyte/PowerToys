@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "../ModuleConstants.h"
+#include "../../ModuleConstants.h"
 #include "MirrorWindow.xaml.h"
 
 namespace winrt::DEPiP::implementation

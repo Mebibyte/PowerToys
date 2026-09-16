@@ -1,7 +1,7 @@
 #include "pch.h"
 
 #include "App.xaml.h"
-#include "DisplayCapture.h"
+#include "../DisplayCapture.h"
 #include "DisplaySelectorWindow.xaml.h"
 #include "MirrorWindow.xaml.h"
 

@@ -1,7 +1,7 @@
 #include "pch.h"
 
 #include "DisplaySelectorWindow.xaml.h"
-#include "resource.h"
+#include "../resource.h"
 
 namespace winrt::DEPiP::implementation
 {

@@ -80,7 +80,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>%(AdditionalOptions) /bigobj</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(GeneratedFilesDir);$(RepoRoot)src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(GeneratedFilesDir);$(GeneratedFilesDir)DEPiPXAML;$(ProjectDir);$(RepoRoot)src\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -114,34 +114,34 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\ModuleConstants.h" />
-    <ClInclude Include="App.xaml.h">
-      <DependentUpon>App.xaml</DependentUpon>
+    <ClInclude Include="DEPiPXAML\App.xaml.h">
+      <DependentUpon>DEPiPXAML\App.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="DisplayCapture.h" />
-    <ClInclude Include="DisplaySelectorWindow.xaml.h">
-      <DependentUpon>DisplaySelectorWindow.xaml</DependentUpon>
+    <ClInclude Include="DEPiPXAML\DisplaySelectorWindow.xaml.h">
+      <DependentUpon>DEPiPXAML\DisplaySelectorWindow.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="MirrorWindow.xaml.h">
-      <DependentUpon>MirrorWindow.xaml</DependentUpon>
+    <ClInclude Include="DEPiPXAML\MirrorWindow.xaml.h">
+      <DependentUpon>DEPiPXAML\MirrorWindow.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml" />
-    <Page Include="DisplaySelectorWindow.xaml" />
-    <Page Include="MirrorWindow.xaml" />
+    <ApplicationDefinition Include="DEPiPXAML\App.xaml" />
+    <Page Include="DEPiPXAML\DisplaySelectorWindow.xaml" />
+    <Page Include="DEPiPXAML\MirrorWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="App.xaml.cpp">
-      <DependentUpon>App.xaml</DependentUpon>
+    <ClCompile Include="DEPiPXAML\App.xaml.cpp">
+      <DependentUpon>DEPiPXAML\App.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="DisplayCapture.cpp" />
-    <ClCompile Include="DisplaySelectorWindow.xaml.cpp">
-      <DependentUpon>DisplaySelectorWindow.xaml</DependentUpon>
+    <ClCompile Include="DEPiPXAML\DisplaySelectorWindow.xaml.cpp">
+      <DependentUpon>DEPiPXAML\DisplaySelectorWindow.xaml</DependentUpon>
     </ClCompile>
-    <ClCompile Include="MirrorWindow.xaml.cpp">
-      <DependentUpon>MirrorWindow.xaml</DependentUpon>
+    <ClCompile Include="DEPiPXAML\MirrorWindow.xaml.cpp">
+      <DependentUpon>DEPiPXAML\MirrorWindow.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -149,22 +149,22 @@
     <ClCompile Include="$(GeneratedFilesDir)module.g.cpp" />
     <ClCompile Include="$(GeneratedFilesDir)DisplaySelectorWindow.g.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ForcedIncludeFiles>pch.h;DisplaySelectorWindow.xaml.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>pch.h;DEPiPXAML\DisplaySelectorWindow.xaml.h</ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="$(GeneratedFilesDir)MirrorWindow.g.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <ForcedIncludeFiles>pch.h;MirrorWindow.xaml.h</ForcedIncludeFiles>
+      <ForcedIncludeFiles>pch.h;DEPiPXAML\MirrorWindow.xaml.h</ForcedIncludeFiles>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="App.idl">
-      <DependentUpon>App.xaml</DependentUpon>
+    <Midl Include="DEPiPXAML\App.idl">
+      <DependentUpon>DEPiPXAML\App.xaml</DependentUpon>
     </Midl>
-    <Midl Include="DisplaySelectorWindow.idl">
-      <DependentUpon>DisplaySelectorWindow.xaml</DependentUpon>
+    <Midl Include="DEPiPXAML\DisplaySelectorWindow.idl">
+      <DependentUpon>DEPiPXAML\DisplaySelectorWindow.xaml</DependentUpon>
     </Midl>
-    <Midl Include="MirrorWindow.idl">
-      <DependentUpon>MirrorWindow.xaml</DependentUpon>
+    <Midl Include="DEPiPXAML\MirrorWindow.idl">
+      <DependentUpon>DEPiPXAML\MirrorWindow.xaml</DependentUpon>
     </Midl>
   </ItemGroup>
   <ItemGroup>

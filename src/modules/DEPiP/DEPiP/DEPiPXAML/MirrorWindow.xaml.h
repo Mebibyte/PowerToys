@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DisplayCapture.h"
+#include "../DisplayCapture.h"
 #include "MirrorWindow.g.h"
 
 namespace winrt::DEPiP::implementation
