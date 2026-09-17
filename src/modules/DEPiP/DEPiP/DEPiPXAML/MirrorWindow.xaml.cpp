@@ -40,7 +40,7 @@ namespace winrt::DEPiP::implementation
         m_source = source;
         m_settings = LoadDEPiPSettings();
         m_captureItem = CreateCaptureItem(source.monitor);
-        Title(L"DEPiP - " + std::wstring(source.info.szDevice));
+        Title(L"DEPiP - " + GetDisplayLabel(source));
 
         auto native = this->try_as<::IWindowNative>();
         winrt::check_hresult(native->get_WindowHandle(&m_window));
@@ -332,9 +332,15 @@ namespace winrt::DEPiP::implementation
         POINT cursor{};
         if (GetCursorPos(&cursor))
         {
-            BYTE alpha = MonitorFromPoint(cursor, MONITOR_DEFAULTTONEAREST) == m_source.monitor ?
-                             255 :
-                             static_cast<BYTE>(MulDiv(255, 100 - m_settings.inactiveTransparency, 100));
+            RECT windowBounds{};
+            bool cursorOnSource =
+                MonitorFromPoint(cursor, MONITOR_DEFAULTTONEAREST) == m_source.monitor;
+            bool cursorOnMirror =
+                GetWindowRect(m_window, &windowBounds) && PtInRect(&windowBounds, cursor);
+            BYTE alpha =
+                cursorOnSource || cursorOnMirror ?
+                    255 :
+                    static_cast<BYTE>(MulDiv(255, 100 - m_settings.inactiveTransparency, 100));
             LONG_PTR style = GetWindowLongPtrW(m_window, GWL_EXSTYLE);
             SetWindowLongPtrW(m_window, GWL_EXSTYLE, style | WS_EX_LAYERED);
             SetLayeredWindowAttributes(m_window, 0, alpha, LWA_ALPHA);

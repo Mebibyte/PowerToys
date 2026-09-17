@@ -4,6 +4,7 @@ struct DisplayInfo
 {
     HMONITOR monitor = nullptr;
     MONITORINFOEXW info{ sizeof(MONITORINFOEXW) };
+    size_t number = 0;
 };
 
 struct DEPiPSettings
@@ -14,6 +15,7 @@ struct DEPiPSettings
 };
 
 std::vector<DisplayInfo> EnumerateDisplays();
+std::wstring GetDisplayLabel(DisplayInfo const& display);
 DEPiPSettings LoadDEPiPSettings();
 winrt::Windows::Graphics::Capture::GraphicsCaptureItem CreateCaptureItem(HMONITOR monitor);
 winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap CaptureDisplayPreview(DisplayInfo const& display);

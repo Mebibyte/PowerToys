@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "DisplayCapture.h"
+#include "resource.h"
 
 #include <common/SettingsAPI/settings_helpers.h>
 
@@ -15,7 +16,7 @@ namespace
         MONITORINFOEXW info{ sizeof(MONITORINFOEXW) };
         if (GetMonitorInfoW(monitor, &info))
         {
-            displays->push_back({ monitor, info });
+            displays->push_back({ monitor, info, displays->size() + 1 });
         }
         return TRUE;
     }
@@ -26,6 +27,18 @@ std::vector<DisplayInfo> EnumerateDisplays()
     std::vector<DisplayInfo> displays;
     EnumDisplayMonitors(nullptr, nullptr, AddMonitor, reinterpret_cast<LPARAM>(&displays));
     return displays;
+}
+
+std::wstring GetDisplayLabel(DisplayInfo const& display)
+{
+    wchar_t const* value = nullptr;
+    int length = LoadStringW(
+        GetModuleHandleW(nullptr),
+        IDS_DISPLAY_LABEL,
+        reinterpret_cast<wchar_t*>(&value),
+        0);
+    winrt::check_bool(length > 0);
+    return std::wstring(value, static_cast<size_t>(length)) + L" " + std::to_wstring(display.number);
 }
 
 DEPiPSettings LoadDEPiPSettings()
@@ -105,6 +118,12 @@ winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap CaptureDisplayPrevie
         sourceWidth,
         sourceHeight,
         SRCCOPY | CAPTUREBLT);
+
+    auto sourcePixels = static_cast<byte*>(pixels);
+    for (size_t offset = 3; offset < PreviewWidth * PreviewHeight * 4; offset += 4)
+    {
+        sourcePixels[offset] = 0xFF;
+    }
 
     winrt::Microsoft::UI::Xaml::Media::Imaging::WriteableBitmap source(
         PreviewWidth,

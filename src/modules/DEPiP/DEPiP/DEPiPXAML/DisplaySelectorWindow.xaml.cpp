@@ -38,7 +38,6 @@ namespace winrt::DEPiP::implementation
 
         m_displays = std::move(displays);
         m_selected = std::move(selected);
-        auto displayLabel = LoadStringResource(IDS_DISPLAY_LABEL);
         auto primaryLabel = LoadStringResource(IDS_PRIMARY_DISPLAY);
 
         auto primary = std::find_if(m_displays.begin(), m_displays.end(), [](auto const& display) {
@@ -81,7 +80,7 @@ namespace winrt::DEPiP::implementation
             image.Source(CaptureDisplayPreview(display));
 
             RECT bounds = display.info.rcMonitor;
-            std::wstring label = displayLabel + L" " + std::to_wstring(index + 1);
+            std::wstring label = GetDisplayLabel(display);
             if ((display.info.dwFlags & MONITORINFOF_PRIMARY) != 0)
             {
                 label += L" (" + primaryLabel + L")";
