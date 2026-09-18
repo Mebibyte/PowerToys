@@ -44,6 +44,7 @@ namespace winrt::DEPiP::implementation
 
         auto native = this->try_as<::IWindowNative>();
         winrt::check_hresult(native->get_WindowHandle(&m_window));
+        AppWindow().SetIcon(L"Assets\\DEPiP.ico");
         SetWindowSubclass(m_window, WindowSubclass, 0, reinterpret_cast<DWORD_PTR>(this));
 
         auto size = m_captureItem.Size();

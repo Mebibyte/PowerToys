@@ -113,6 +113,11 @@
     <ResourceCompile Include="DEPiP.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Assets\DEPiP.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\ModuleConstants.h" />
     <ClInclude Include="DEPiPXAML\App.xaml.h">
       <DependentUpon>DEPiPXAML\App.xaml</DependentUpon>

@@ -48,6 +48,7 @@ namespace winrt::DEPiP::implementation
         auto native = this->try_as<::IWindowNative>();
         HWND window = nullptr;
         winrt::check_hresult(native->get_WindowHandle(&window));
+        AppWindow().SetIcon(L"Assets\\DEPiP.ico");
         UINT dpi = GetDpiForWindow(window);
         RECT windowRect{
             0,

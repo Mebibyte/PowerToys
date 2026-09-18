@@ -1,5 +1,7 @@
 #include "resource.h"
 
+IDI_APP_ICON ICON "Assets\\DEPiP.ico"
+
 STRINGTABLE
 BEGIN
     IDS_APP_TITLE "DEPiP"
